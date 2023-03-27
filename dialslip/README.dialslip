@@ -1,0 +1,27 @@
+
+src/new/slip.h
+ edit to customize path names and line discipline
+
+src/new/slip.config
+src/new/slip.hosts
+ move to location specified in slip.h
+
+src/new/dslipuser.c
+ cc -O -o dslipuser dslipuser.c
+
+src/new/mkslipuser.c
+ cc -O -o mkslipuser mkslipuser.c
+
+src/new/slip.c
+ cc -O -o slip slip.c
+
+Modifications:
+01/31/91 Alan Batie
+ - Ported slip.c dslipuser.c mkslipuser.c for Unix System V/386
+ Release V.4.
+
+02/08/91 Sudji Husodo
+ - modified to log slip activities to /var/slip/slip.log if the file exists.
+ - changed the call to "system" to fork and exec, so we don't have to setuid
+ slattach and ifconfig to root.
+

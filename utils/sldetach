@@ -1,0 +1,17 @@
+:
+#
+# sldetach removes the serial line that is being used for slip connection.
+#
+
+if [ $# != 1 ]; then
+ echo "Usage: sldetach interface"
+ exit 1
+fi
+
+ps=`ps -ef | grep -v grep | grep slattach | grep $1`
+
+if [ "$ps" != "" ]; then
+ kill -1 `echo $ps | nawk '{print $2}'`
+else
+ echo "sldetach: interface unit $1 not found"
+fi

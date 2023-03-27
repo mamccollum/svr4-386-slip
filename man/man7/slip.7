@@ -1,0 +1,85 @@
+.\"
+.\" Copyright 1991, Intel Corporation
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software and
+.\" its documentation for any purpose and without fee is hereby granted,
+.\" provided that the above copyright notice appear in all copies and
+.\" that both the copyright notice appear in all copies and that both
+.\" the copyright notice and this permission notice appear in
+.\" supporting documentation, and that the name of Intel Corporation
+.\" not be used in advertising or publicity pertaining to distribution
+.\" of the software without specific, written prior permission.
+.\"
+.\" COMPANY AND/OR INTEL DISCLAIM ALL WARRANTIES WITH REGARD TO
+.\" THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. IN NO
+.\" EVENT SHALL COMPANY NOR INTEL BE LIABLE FOR ANY SPECIAL,
+.\" INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+.\" RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+.\" ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+.\" OF THIS SOFTWARE.
+.\"
+.TH SLIP 7 "Network Drivers"
+.SH NAME
+SLIP \- Serial Link Internet Protocol
+.SH SYNOPSIS
+.nf
+.ft B
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/stream.h>
+#include <net/if.h>
+#include <sys/slip.h>
+
+s = open ("/dev/slip", O_RDWR);
+.ft R
+.fi
+.SH DESCRIPTION
+.PP
+\fBSLIP\fP is a multiplexing STREAMS driver that implements the
+packet framing protocol specified in RFC1055.
+.PP
+The \fBSLIP\fP driver is usually linked below the \fIip\fP driver and above the
+\fIasy\fP (serial) driver.
+The \fIslattach\fP command constructs the required \fIip\fP to \fBSLIP\fP to
+\fIasy\fP STREAMS stack so that serial lines can be used as a network interfaces.
+.PP
+Multiple serial devices can be linked below the \fBSLIP\fP driver.
+The maximum number of serial devices the \fBSLIP\fP driver can have is
+controlled by the configuration parameter \fBSLIP_NUM\fP in the file
+\fI/etc/conf/pack.d/slip/space.c\fP.
+Note that the slip hangup daemon (\fIslhangupd\fP), if used, takes one entry
+of \fBSLIP's\fP driver data structure, and should be considered before setting
+\fBSLIP_NUM\fP.
+.PP
+\fII_STR ioctl commands:\fP
+.PP
+The I_STR ioctl commands are provided to add the capability of passing
+M_HANGUP signal received by the \fBSLIP\fP driver to the process that builds the
+SLIP protocol stack.
+This is necessary because the TCP/IP protocol stack may disregard M_HANGUP
+messages.
+.PP
+The I_STR ioctl commands codes below are defined in <\fIsys/slip.h\fP>.
+.TP 20
+.B REG_SLHUP
+A process that sends this ioctl will be notified of M_HANGUP messages sent
+by any of the lower ttys associated with the \fBSLIP\fP driver.
+The notification is done by sending an M_DATA messages containing the process
+ID of the program that linked the effected tty to the \fBSLIP\fP driver.
+This ioctl is generally sent by SLIP hangup daemon \fIslhangupd\fP.
+Only one process can be registered to receive M_HANGUP notifications at any
+one time.
+.TP 20
+.B UNREG_SLHUP
+This ioctl unregisters a process from receiving M_HANGUP notifications.
+Since only one process can be registered to receive M_HANGUP notifications,
+it is important that a process unregister before it exits.
+.SH SEE ALSO
+slattach(1M), sldetach(1M), slhangupd(1M), asy(7), ip(7)
+.SH FILES
+/dev/slip
+.SH AUTHOR
+Sudji Husodo

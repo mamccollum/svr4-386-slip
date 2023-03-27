@@ -1,0 +1,105 @@
+
+SLIP (Serial Link Internet Protocol)
+
+To build and install the slip driver, the slip utilities, and the slip login
+(dialslip) utilities, type the following command:
+
+ make
+
+
+SLIP DRIVER
+
+If you are using Unix System V Release 4.0.2 or below, you will need to copy
+v2.ip.fix/Driver.o to /etc/conf/pack.d/ip/Driver.o before you build the
+kernel. The ip driver of Unix System V R 4.0.2 has a bug for a point to point
+connection which panics the system. The v2.ip.fix/Driver.o fixes the problem.
+SLIP (Serial Link Internet Protocol)
+
+If you need to configure the second serial port, because your first serial
+port is used by other device, refer to Intel's Unix System V.4.0 Administra-
+tors Guide.
+
+Once the new ip driver and the slip have been installed, and your serial port
+has been set up, you can build the kernel using the idbuild command. Don't
+forget to reboot your system after the idbuild command completes succesfully
+for the new kernel to take into effect.
+
+
+SLIP UTILITIES
+
+slattach
+
+The slattach command links the slip streams driver to the serial port and links
+the ip driver to the slip driver.
+
+The syntax of slattach is as following:
+
+ slattach [-i] nodename interface_name
+OR slattach -d [-i] devname interface_name [ baudrate ]
+OR slattach - interface_name
+
+The first option uses the Basic Networking Utilities (Advanced System
+Administration Volume 1 Chapter 7-15). Once the administration files
+are set up, you can use the remote node name to attach slip directly
+or through your modem. Example:
+ slattach venus sl0
+
+The "-d" does not use BNU but directly open the next argument which is
+the serial device and link it to the slip driver. The baudrate sets up
+the line speed of the serial line; the default baudrate is 9600.
+
+To start the slip interface using the first serial port at 1200 baud
+execute the below command:
+
+ slattach -d /dev/tty00 sl0 1200
+
+If the slip hangup daemon (slhangupd) is run, slattach by default is set
+to receive hangup signal (SIGHUP) sent by the slip driver through slhangupd.
+The -i option ignores any hangup signal.
+
+
+ifconfig
+
+This utility is included in the standard base Unix System V Release 4.0
+product. Ifconfig is used to configure your system to the remote slip node.
+
+ ifconfig interface_name source destination up
+
+
+slhangupd
+
+Slhangup (slip hangup daemon) is a daemon used to receive messages sent by
+the slip driver. Whenever the slip driver receives a M_HANGUP message from
+a particular line, the driver sends sends the process id of the controlling
+slattach process to slhangupd. Slhangup then will send a SIGHUP (hangup
+signal) to the pid received from the slip driver.
+
+There is no restriction of the execution order of slattach and slhangupd.
+
+
+sldetach
+
+sldetach removes the serial line that is being used for slip connection.
+
+ sldetach interface_name
+
+
+DIALSLIP (slip login utilities)
+
+To install dialslip:
+
+1. Set up the /etc/slip.hosts file. This file maps login names to IP
+ addresses, which # comments, as usual.
+
+2. Set up the /etc/slip.config file. This file defines the IP address
+ of the local system on each interface. Set them all the same. There
+ can be as many simultaneous logins as lines in this file (not counting
+ comments).
+
+3. Run "mkslipuser". This builds a file similar in nature to utmp that
+ keeps track of who's logged in and what interface they're using.
+ This command should also be run at boot time to clean things up.
+
+4. Set up accounts for each system dialing in with "slip" as the shell
+ with its setuid bit set to root.
+

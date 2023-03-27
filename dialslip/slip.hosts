@@ -1,0 +1,6 @@
+# dialup slip host table - maps usercodes to host addresses
+#
+128.120.253.1 user1
+128.120.253.2 user2
+128.120.253.3 user3
+128.120.253.4 user4

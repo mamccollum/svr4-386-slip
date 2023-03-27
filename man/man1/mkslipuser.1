@@ -1,0 +1,93 @@
+.TH slip 1 "TCP/IP"
+.SH NAME
+slip, mkslipuser, dslipuser \- dialup SLIP utilities
+.SH SYNOPSIS
+.nf
+\fB/usr/sbin/slip\fP
+\fB/usr/sbin/mkslipuser\fP [ #_of_logins host_address ]
+\fB/usr/sbin/dslipuser\fP
+.fi
+.SH DESCRIPTION
+.PP
+The \fBslip\fP program sets up a SLIP protocol over a dialup line.
+The SLIP protocol is obtained by logging into a host and executing
+the \fBslip\fP program.
+Because \fBslip\fP must execute \fIslattach\fP and \fIifconfig\fP, it must run
+setuid to root.
+.PP
+Slip uses two files to control access; a host table (\fI/etc/slip.hosts\fP)
+that maps login IDs to internet addresses, and a user file
+(\fI/etc/slip.user\fP) that keeps track of users logged in over \fBslip\fP.
+The host table file must be created by hand and has the following format:
+.PP
+.nf
+.CW
+# Lines starting with "#" are ignored.
+# The first field is the IP address to be assigned the remote host that
+# is logging in. The second field is the login ID which is used to find
+# the appropriate IP address.
+#
+# <IP address> <login ID>
+192.9.2.1 rkl
+192.9.2.2 sjg
+.fi
+.fP
+.PP
+If the file \fI/var/slip/slip.log\fP exists, \fBslip\fP will append log entries
+that show when users invoked \fBslip\fP and when they disconnected.
+.PP
+The \fBmkslipuser\fP program is used to create a blank user file.
+You may want to envoke \fBmkslipuser\fP from the \fI/etc/init.d/inetinit\fP
+rc file to insure a sane system after reboot.
+\fBMkslipuser\fP uses information supplied either on the command line or from
+the configuration file \fI/etc/slip.config\fP.
+The configuration file consists of a number of one-line entries; one for each
+simultaneous login that is allowed.
+The number of simultaneous logins must, of course, be less than or equal to
+the number of SLIP interfaces available.
+Each entry contains an internet address (specified by hostname or dot notation
+format) for the server side of a SLIP line.
+The entries may all be the same or unique depending on how you prefer to
+administer your network.
+The configuration file may also contain comments which are lines starting with
+a "#".
+Here is an example:
+.PP
+.nf
+.CW
+# Lines that start with "#" are ignored.
+# This example allows 4 simultaneous SLIP logins all using the same server
+# side IP address.
+#
+# <address of server side of point to point link>
+aslan.acme.com
+aslan.acme.com
+aslan.acme.com
+aslan.acme.com
+.fi
+.fP
+.PP
+In the case where all of the server side addresses are the same, command line
+arguments may be used instead of a configuration file. The first argument
+is the number of simultaneous logins to allow, and the second argument is
+the address of the server side of the point-point link.
+.PP
+The \fBdslipuser\fP program displays the contents of the user file which
+identifies who is logged in and what internet addresses they are using.
+.SH SEE ALSO
+.nf
+ifconfig(1M), slattach(1M), slhangupd(1M), slip(7)
+.fi
+.SH FILES
+.nf
+/etc/slip.hosts
+/etc/slip.user
+/etc/slip.config
+/var/slip/slip.log
+.fi
+.SH ORIGINAL AUTHOR
+.nf
+Greg Whitehead 10-02-87
+Computing Services
+University of California, Davis
+.fi

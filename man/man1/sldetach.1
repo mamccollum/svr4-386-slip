@@ -1,0 +1,78 @@
+.\"
+.\" Copyright 1991, Intel Corporation
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software and
+.\" its documentation for any purpose and without fee is hereby granted,
+.\" provided that the above copyright notice appear in all copies and
+.\" that both the copyright notice appear in all copies and that both
+.\" the copyright notice and this permission notice appear in
+.\" supporting documentation, and that the name of Intel Corporation
+.\" not be used in advertising or publicity pertaining to distribution
+.\" of the software without specific, written prior permission.
+.\"
+.\" COMPANY AND/OR INTEL DISCLAIM ALL WARRANTIES WITH REGARD TO
+.\" THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. IN NO
+.\" EVENT SHALL COMPANY NOR INTEL BE LIABLE FOR ANY SPECIAL,
+.\" INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+.\" RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION,
+.\" ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+.\" OF THIS SOFTWARE.
+.\"
+.TH slattach 1M "TCP/IP"
+.SH NAME
+slattach, sldetach \- assigns and removes serial lines as a SLIP interface
+.SH SYNOPSIS
+.nf
+\fB/usr/sbin/slattach\fP [\fB-i\fP] node_name interface_name
+\fB/usr/sbin/slattach -d\fP [\fB-i\fP] device_name interface_name [ baudrate ]
+\fB/usr/sbin/slattach -\fP interface_name [ process_id ]
+
+\fB/usr/sbin/sldetach\fP interface_name
+.fi
+.SH DESCRIPTION
+.PP
+\fBSlattach\fP is used to assign a serial line as a network interface
+using the \fISLIP\fP (Serial Link Internet Protocol) driver.
+.PP
+When invoked with \fInode_name\fP and \fIinterface_name\fP, \fBslattach\fP
+uses BNU (Basic Networking Utilities) to establish an outgoing serial line
+connection.
+Refer to the \fIAdvanced System Administration Guide\fP for complete
+information on set up and administration of BNU.
+.PP
+The \fB-i\fP option causes \fBslattach\fP to ignore SIGHUP.
+By default \fBslattach\fP exits gracefully whenever a SIGHUP is caught and
+processed by the \fIslhangupd\fP daemon.
+.PP
+The \fB-d\fP option causes \fBslattach\fP to directly open the specified
+\fIdevice_name\fP without the use of BNU.
+In this case the \fIbaudrate\fP parameter is used to set the speed of the
+connection.
+The default baudrate is 9600.
+.PP
+The \fB-\fP option causes stdin to be used as the device to be attached to the
+\fISLIP\fP driver.
+This option is used to convert a remote login line to a SLIP connection.
+In this case, SIGHUP can not be ignored.
+The optional argument \fIprocess_id\fP, if specified, causes \fBslattach\fP to
+send a SIGHUP to the specified process ID when it receives the SIGHUP signal.
+.PP
+\fBSldetach\fP is used to decommission a serial line that was used for a SLIP
+connection.
+.SH EXAMPLES
+.nf
+slattach venus sl0
+slattach -d -i /dev/tty00 sl0 19200
+
+sldetach sl0
+.fi
+.SH SEE ALSO
+.nf
+slhangupd(1M), slip(1), asy(7), ip(7), slip(7)
+\fIAdvanced System Administration Guide\fP.
+.fi
+.SH AUTHOR
+Sudji Husodo

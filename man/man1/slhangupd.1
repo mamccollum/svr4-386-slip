@@ -1,0 +1,55 @@
+.\"
+.\" Copyright 1991, Intel Corporation
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software and
+.\" its documentation for any purpose and without fee is hereby granted,
+.\" provided that the above copyright notice appear in all copies and
+.\" that both the copyright notice appear in all copies and that both
+.\" the copyright notice and this permission notice appear in
+.\" supporting documentation, and that the name of Intel Corporation
+.\" not be used in advertising or publicity pertaining to distribution
+.\" of the software without specific, written prior permission.
+.\"
+.\" COMPANY AND/OR INTEL DISCLAIM ALL WARRANTIES WITH REGARD TO
+.\" THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. IN NO
+.\" EVENT SHALL COMPANY NOR INTEL BE LIABLE FOR ANY SPECIAL,
+.\" INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+.\" RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION,
+.\" ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+.\" OF THIS SOFTWARE.
+.\"
+.TH slhangupd 1M "TCP/IP"
+.SH NAME
+slhangupd \- slip hangup daemon
+.SH SYNOPSIS
+.nf
+.ft B
+/usr/sbin/slhangupd
+.ft R
+.fi
+.SH DESCRIPTION
+.PP
+Due to the interworkings of the TCP/IP protocol stack, hangup signals
+from the tty may not reach \fIslattach\fP to notify it that the SLIP
+connection has been lost.
+\fBSlhangupd\fP is a daemon that receives messages from the \fISLIP\fP driver
+(in the form of process IDs) and sends a SIGHUP signal to the specified
+process ID on behave of the tty.
+.PP
+When the \fISLIP\fP driver is first opened, it stores the process ID of
+the program that did the open.
+Normally, this will be \fIslattach\fP.
+Whenever \fISLIP\fP receives a M_HANGUP message from the STREAMS driver under
+it (usually a tty driver), it sends the process ID of the program that did the
+initial open to \fBslhangupd\fP.
+When \fBslhangupd\fP receives the message, it sends a SIGHUP to the process ID
+specified in the message.
+.SH SEE ALSO
+slattach(1M), asy(7), slip(7)
+.SH FILES
+/dev/slip
+.SH AUTHOR
+Sudji Husodo

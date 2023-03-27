@@ -1,0 +1,5 @@
+
+# "driver/v2.ip.fix//Driver.o.UU" was split into 2 parts; to create it, do
+ cat driver/v2.ip.fix//Driver.UU.0[1-9] >driver/v2.ip.fix//Driver.o.UU
+# Run uudecode to create "driver/v2.ip.fix//Driver.o":
+ uudecode driver/v2.ip.fix//Driver.o.UU
